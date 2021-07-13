@@ -12,8 +12,10 @@
     inputs:
       - name: images
         default: azure://bipononmodeltraining/valohai-sample/images/*
+        keep-directories: suffix 
       - name: annotations
         default: azure://bipononmodeltraining/valohai-sample/annotations/*
+        keep-directories: suffix
     parameters:
       - name: image-dir
         default: /valohai/inputs/images
