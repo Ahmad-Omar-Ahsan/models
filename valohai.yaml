@@ -1,0 +1,24 @@
+---
+
+- step:
+    name: generate-tfrecords
+    image: tensorflow/tensorflow:2.1.0-py3
+    command: 
+      - cd models/research
+      - protoc object_detection/protos/*.proto --python_out=.
+      - cp object_detection/packages/tf2/setup.py .
+      - python -m pip install --use-feature=2020-resolver .
+      - python3 models/converter-mod.py {parameters}
+    inputs:
+      - name: images
+        default: azure://bipononmodeltraining/valohai-sample/images/*
+      - name: annotations
+        default: azure://bipononmodeltraining/valohai-sample/annotations/*
+    parameters:
+      - name: image-dir
+        default: /valohai/inputs/images
+      - name: cvat-dir
+        default: /valohai/inputs/annotations
+      - name: output-dir
+        default: /valohai/outputs/tfrecords/
+    
