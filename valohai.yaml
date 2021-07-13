@@ -4,11 +4,11 @@
     name: generate-tfrecords
     image: tensorflow/tensorflow:2.1.0-py3
     command: 
-      - cd models/research
+      - cd research
       - protoc object_detection/protos/*.proto --python_out=.
       - cp object_detection/packages/tf2/setup.py .
       - python -m pip install --use-feature=2020-resolver .
-      - python3 models/converter-mod.py {parameters}
+      - python3 converter-mod.py {parameters}
     inputs:
       - name: images
         default: azure://bipononmodeltraining/valohai-sample/images/*
