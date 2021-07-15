@@ -2,13 +2,14 @@
 
 - step:
     name: generate-tfrecords
-    image: tensorflow/tensorflow:2.1.0-py3
+    image: dealer56/tfod:v1
     command: 
       - cd research
       - protoc object_detection/protos/*.proto --python_out=.
       - cp object_detection/packages/tf2/setup.py .
       - python -m pip install --use-feature=2020-resolver .
-      - python3 converter-mod.py {parameters}
+      - cd ../
+      - python converter-mod.py {parameters}
     inputs:
       - name: images
         default: azure://bipononmodeltraining/valohai-sample/images/*
@@ -23,4 +24,29 @@
         default: /valohai/inputs/annotations
       - name: output-dir
         default: /valohai/outputs/tfrecords/
+        
+- step:
+    name: train-model
+    image: dealer56/tfod:v1
+    command: 
+      - cd research
+      - protoc object_detection/protos/*.proto --python_out=.
+      - cp object_detection/packages/tf1/setup.py .
+      - python -m pip install --use-feature=2020-resolver .
+      - cd ../
+      - python research/object_detection/model_main.py  {parameters}
+    inputs:
+      - name: tfrecords
+        default: azure://bipononmodeltraining/valohai-sample/data/01F9T/01F9TN1YAB7H2E27TNA5SBN4VQ/output-13/tfrecords/*
+        keep-directories: suffix 
+      - name: checkpoint
+        default: azure://bipononmodeltraining/valohai-sample/checkpoint/*
+        keep-directories: suffix
+    parameters:
+      - name: pipeline_config_path
+        default: /valohai/inputs/checkpoint/pipeline.config
+      - name: model_dir
+        default: /valohai/outputs/model_dir
+      - name: alsologtostderr
+        default: True
     
